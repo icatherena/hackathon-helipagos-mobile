@@ -12,6 +12,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       initialRoute: '/coins/list',
       routes: <String, WidgetBuilder>{
         CoinList.routeName: (context) => const CoinList(),
