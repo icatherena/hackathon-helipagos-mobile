@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:helipagos_app/src/model/Coin.dart';
 import 'package:helipagos_app/src/screens/coin_detail.dart';
 import 'package:helipagos_app/src/screens/coin_list.dart';
 
@@ -16,9 +17,12 @@ class MyApp extends StatelessWidget {
       initialRoute: '/coins/list',
       routes: <String, WidgetBuilder>{
         CoinList.routeName: (context) => const CoinList(),
-        CoinDetail.routeName: (context) => CoinDetail(
-              coinId: '',
-            ),
+        CoinDetail.routeName: (context) {
+          final coin = ModalRoute.of(context)!.settings.arguments as Coin;
+          return CoinDetail(
+            coinId: coin,
+          );
+        },
       },
     );
   }

@@ -14,6 +14,7 @@ class _CoinList extends State<CoinList> {
   HttpHandler httpHandler = HttpHandler();
   List<Coin> allCoins = [];
   List<Coin> filteredCoins = [];
+  List<Coin> backUpAllCoins = [];
 
   TextEditingController filterController = TextEditingController();
 
@@ -23,6 +24,7 @@ class _CoinList extends State<CoinList> {
     httpHandler.getListCoins().then((result) {
       setState(() {
         allCoins = result;
+        backUpAllCoins = List.from(allCoins);
         filteredCoins = List.from(allCoins);
       });
     });
@@ -46,14 +48,14 @@ class _CoinList extends State<CoinList> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) =>
-                              CoinDetail(coinId: allCoins[index].id)),
+                        builder: (context) => CoinDetail(
+                          coinId: Coin(
+                              id: allCoins[index].id,
+                              name: allCoins[index].name,
+                              symbol: allCoins[index].symbol),
+                        ),
+                      ),
                     );
-                    /* Navigator.pushNamed(
-                      context,
-                      '/coin_detail',
-                      arguments: {allCoins[index].id},
-                    ); */
                   },
                   trailing: Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
@@ -105,9 +107,13 @@ class _CoinList extends State<CoinList> {
                   TextButton(
                     onPressed: () {
                       setState(() {
-                        //allCoins.remove(!allCoins.contains(filteredCoins));
-                        allCoins.retainWhere(
-                            (coin) => filteredCoins.contains(coin));
+                        if (filterController.text.isEmpty) {
+                          allCoins = List.from(backUpAllCoins);
+                        } else {
+                          allCoins.retainWhere(
+                              (coin) => filteredCoins.contains(coin));
+                        }
+                        filterController.text = '';
                       });
                       Navigator.pop(context);
                     },
@@ -133,68 +139,3 @@ class _CoinList extends State<CoinList> {
     });
   }
 }
-
-/* class FilteredCoins extends StatelessWidget {
-  const FilteredCoins({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Filtered Coins'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-        child: ListView.builder(
-          itemCount: filteredCoins.length,
-          itemBuilder: (context, index) {
-            return Column(
-              children: [
-                ListTile(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                              CoinDetail(coinId: filteredCoins[index].id)),
-                    );
-                    /* Navigator.pushNamed(
-                      context,
-                      '/coin_detail',
-                      arguments: {allCoins[index].id},
-                    ); */
-                  },
-                  trailing: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text(
-                        'Coin symbol:',
-                        style: TextStyle(fontSize: 12.0),
-                      ),
-                      Text(
-                        filteredCoins[index].symbol,
-                        style: const TextStyle(fontWeight: FontWeight.w600),
-                      ),
-                    ],
-                  ),
-                  title: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Coin name:',
-                          style: TextStyle(fontSize: 12.0),
-                        ),
-                        Text(filteredCoins[index].name),
-                      ]),
-                ),
-                const Divider(),
-              ],
-            );
-          },
-        ),
-      ),
-    );
-  }
-}
- */
